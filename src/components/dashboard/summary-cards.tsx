@@ -1,7 +1,7 @@
 import { ListTodo, CalendarClock, Flame, CheckCircle2 } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import type { getTaskSummary } from "@/lib/sample-tasks";
+import type { getTaskSummary } from "@/lib/tasks";
 
 const CARD_CONFIG = [
   { key: "total", label: "Total tasks", icon: ListTodo },

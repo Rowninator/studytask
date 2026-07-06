@@ -3,7 +3,7 @@ import { Pencil, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import type { Task } from "@/lib/sample-tasks";
+import type { Task } from "@/lib/tasks";
 
 const PRIORITY_VARIANT: Record<Task["priority"], "destructive" | "secondary" | "outline"> = {
   High: "destructive",

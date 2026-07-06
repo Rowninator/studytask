@@ -1,5 +1,5 @@
 import { TaskCard } from "@/components/dashboard/task-card";
-import type { Task } from "@/lib/sample-tasks";
+import type { Task } from "@/lib/tasks";
 
 export function TaskList({ tasks }: { tasks: Task[] }) {
   if (tasks.length === 0) {

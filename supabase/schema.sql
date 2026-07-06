@@ -34,6 +34,10 @@ before update on public.study_tasks
 for each row
 execute function public.set_updated_at();
 
+-- Let logged-in users hit this table at all; RLS policies below then
+-- restrict which rows they can actually see/change.
+grant select, insert, update, delete on public.study_tasks to authenticated;
+
 -- Row Level Security: each user can only access their own tasks.
 alter table public.study_tasks enable row level security;
 

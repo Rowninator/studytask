@@ -1,16 +1,7 @@
-export type Priority = "Low" | "Medium" | "High";
-export type Status = "Not Started" | "In Progress" | "Completed";
+import type { Task } from "@/lib/tasks";
 
-export interface Task {
-  id: string;
-  title: string;
-  description: string;
-  subject: string;
-  priority: Priority;
-  status: Status;
-  dueDate: string;
-}
-
+// Fallback/dev reference data only — the dashboard now reads real tasks
+// from Supabase. Not used in the live render path.
 export const SAMPLE_TASKS: Task[] = [
   {
     id: "1",
@@ -67,23 +58,3 @@ export const SAMPLE_TASKS: Task[] = [
     dueDate: "2026-07-10",
   },
 ];
-
-export function getTaskSummary(tasks: Task[]) {
-  const now = new Date("2026-07-05");
-  const dueSoonCutoff = new Date(now);
-  dueSoonCutoff.setDate(now.getDate() + 5);
-
-  return {
-    total: tasks.length,
-    dueSoon: tasks.filter((task) => {
-      const due = new Date(task.dueDate);
-      return (
-        task.status !== "Completed" && due >= now && due <= dueSoonCutoff
-      );
-    }).length,
-    highPriority: tasks.filter(
-      (task) => task.priority === "High" && task.status !== "Completed"
-    ).length,
-    completed: tasks.filter((task) => task.status === "Completed").length,
-  };
-}

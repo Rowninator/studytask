@@ -7,7 +7,7 @@ import { SummaryCards } from "@/components/dashboard/summary-cards";
 import { TaskForm } from "@/components/dashboard/task-form";
 import { TaskList } from "@/components/dashboard/task-list";
 import { Button } from "@/components/ui/button";
-import { SAMPLE_TASKS, getTaskSummary } from "@/lib/sample-tasks";
+import { getTaskSummary, getUserTasks, type Task } from "@/lib/tasks";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +20,16 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const summary = getTaskSummary(SAMPLE_TASKS);
+  let tasks: Task[] = [];
+  let loadError = false;
+
+  try {
+    tasks = await getUserTasks(supabase, data.user.id);
+  } catch {
+    loadError = true;
+  }
+
+  const summary = getTaskSummary(tasks);
 
   return (
     <AppShell>
@@ -37,7 +46,16 @@ export default async function DashboardPage() {
           </Button>
         </div>
 
-        <TaskList tasks={SAMPLE_TASKS} />
+        {loadError ? (
+          <div className="rounded-xl border border-dashed border-destructive/40 p-10 text-center">
+            <p className="text-sm text-destructive">
+              Something went wrong while loading your tasks. Please try
+              again.
+            </p>
+          </div>
+        ) : (
+          <TaskList tasks={tasks} />
+        )}
 
         <TaskForm />
       </div>
