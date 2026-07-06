@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { LayoutDashboard, ListChecks, BookOpen, LogOut } from "lucide-react";
+import { LayoutDashboard, ListChecks, BookOpen } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { LogoutButton } from "@/components/dashboard/logout-button";
 
 const NAV_ITEMS = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -29,10 +29,7 @@ export function AppSidebar() {
         ))}
       </nav>
 
-      <Button variant="ghost" className="w-full justify-start gap-2.5 px-2.5">
-        <LogOut className="size-4" />
-        Log out
-      </Button>
+      <LogoutButton />
     </aside>
   );
 }
