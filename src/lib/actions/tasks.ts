@@ -103,3 +103,50 @@ export async function updateTask(
   revalidatePath("/dashboard");
   return { success: true };
 }
+
+export async function deleteTask(taskId: string): Promise<TaskFormState> {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getUser();
+
+  if (!data.user) {
+    return { error: "You must be logged in to delete a task." };
+  }
+
+  const { error } = await supabase
+    .from("study_tasks")
+    .delete()
+    .eq("id", taskId)
+    .eq("user_id", data.user.id);
+
+  if (error) {
+    return { error: "Could not delete this task. Please try again." };
+  }
+
+  revalidatePath("/dashboard");
+  return { success: true };
+}
+
+export async function toggleTaskCompletion(
+  taskId: string,
+  completed: boolean
+): Promise<TaskFormState> {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getUser();
+
+  if (!data.user) {
+    return { error: "You must be logged in to update a task." };
+  }
+
+  const { error } = await supabase
+    .from("study_tasks")
+    .update({ status: completed ? "Completed" : "Not Started" })
+    .eq("id", taskId)
+    .eq("user_id", data.user.id);
+
+  if (error) {
+    return { error: "Could not update this task. Please try again." };
+  }
+
+  revalidatePath("/dashboard");
+  return { success: true };
+}

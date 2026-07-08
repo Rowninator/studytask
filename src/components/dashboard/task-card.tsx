@@ -1,8 +1,7 @@
-import { Trash2 } from "lucide-react";
-
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { CompleteCheckbox } from "@/components/dashboard/complete-checkbox";
+import { DeleteTaskButton } from "@/components/dashboard/delete-task-button";
 import { EditTaskDialog } from "@/components/dashboard/edit-task-dialog";
 import type { Task } from "@/lib/tasks";
 
@@ -18,12 +17,7 @@ export function TaskCard({ task }: { task: Task }) {
   return (
     <Card>
       <CardContent className="flex items-start gap-3">
-        <input
-          type="checkbox"
-          checked={isCompleted}
-          readOnly
-          className="mt-1 size-4 shrink-0 rounded border-input accent-primary"
-        />
+        <CompleteCheckbox taskId={task.id} completed={isCompleted} />
 
         <div className="flex-1 space-y-1.5">
           <div className="flex flex-wrap items-center gap-2">
@@ -54,9 +48,7 @@ export function TaskCard({ task }: { task: Task }) {
 
         <div className="flex shrink-0 items-center gap-1">
           <EditTaskDialog task={task} />
-          <Button variant="ghost" size="icon-sm" aria-label="Delete task">
-            <Trash2 className="size-3.5" />
-          </Button>
+          <DeleteTaskButton taskId={task.id} />
         </div>
       </CardContent>
     </Card>
