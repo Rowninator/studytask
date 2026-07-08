@@ -1,8 +1,9 @@
-import { Pencil, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { EditTaskDialog } from "@/components/dashboard/edit-task-dialog";
 import type { Task } from "@/lib/tasks";
 
 const PRIORITY_VARIANT: Record<Task["priority"], "destructive" | "secondary" | "outline"> = {
@@ -52,9 +53,7 @@ export function TaskCard({ task }: { task: Task }) {
         </div>
 
         <div className="flex shrink-0 items-center gap-1">
-          <Button variant="ghost" size="icon-sm" aria-label="Edit task">
-            <Pencil className="size-3.5" />
-          </Button>
+          <EditTaskDialog task={task} />
           <Button variant="ghost" size="icon-sm" aria-label="Delete task">
             <Trash2 className="size-3.5" />
           </Button>

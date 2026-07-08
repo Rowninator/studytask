@@ -7,6 +7,7 @@ import { SummaryCards } from "@/components/dashboard/summary-cards";
 import { TaskForm } from "@/components/dashboard/task-form";
 import { TaskList } from "@/components/dashboard/task-list";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getTaskSummary, getUserTasks, type Task } from "@/lib/tasks";
 import { createClient } from "@/lib/supabase/server";
 
@@ -57,7 +58,14 @@ export default async function DashboardPage() {
           <TaskList tasks={tasks} />
         )}
 
-        <TaskForm />
+        <Card>
+          <CardHeader>
+            <CardTitle>Add a task</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <TaskForm />
+          </CardContent>
+        </Card>
       </div>
     </AppShell>
   );
