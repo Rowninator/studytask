@@ -41,7 +41,7 @@ export default async function DashboardPage() {
 
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-medium">Your tasks</h2>
-          <Button size="sm">
+          <Button size="sm" nativeButton={false} render={<a href="#add-task" />}>
             <Plus className="size-4" />
             Add task
           </Button>
@@ -58,7 +58,7 @@ export default async function DashboardPage() {
           <FilterableTaskList tasks={tasks} />
         )}
 
-        <Card>
+        <Card id="add-task">
           <CardHeader>
             <CardTitle>Add a task</CardTitle>
           </CardHeader>

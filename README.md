@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# StudyTask
 
-## Getting Started
+A student task and study tracker for assignments, priorities, subjects, and due dates.
 
-First, run the development server:
+## Purpose
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+StudyTask helps students keep track of their schoolwork in one place: what's due, what's high priority, and what's already done. Each user has a private, protected dashboard showing only their own tasks.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- [Next.js](https://nextjs.org) (App Router) + React + TypeScript
+- [Tailwind CSS](https://tailwindcss.com) + [shadcn/ui](https://ui.shadcn.com) components
+- [Supabase](https://supabase.com) — Postgres database, authentication, and Row Level Security
+- Deployed on [Vercel](https://vercel.com)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Features
 
-## Learn More
+- Email/password signup and login (Supabase Auth)
+- Protected `/dashboard` route — logged-out users are redirected to `/login`; logged-in users are redirected away from `/login` and `/signup`
+- Create, view, edit, and delete study tasks
+- Mark tasks complete/incomplete
+- Filter tasks by status, priority, and subject
+- Summary cards (total tasks, due soon, high priority, completed)
+- Loading, empty, and error states throughout
+- Each user can only ever see and modify their own tasks, enforced by Postgres Row Level Security — not just app-level checks
 
-To learn more about Next.js, take a look at the following resources:
+## Local setup
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Copy the environment variable template and fill in your own Supabase project's values:
+   ```bash
+   cp .env.local.example .env.local
+   ```
+3. Set up the database — see [Supabase setup](#supabase-setup) below.
+4. Run the dev server:
+   ```bash
+   npm run dev
+   ```
+5. Open [http://localhost:3000](http://localhost:3000).
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Environment variables
 
-## Deploy on Vercel
+Defined in `.env.local` (never committed — see `.gitignore`). Names only, no real values here:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Both come from your Supabase project's **Project Settings → API** page (Project URL and the `anon` / `public` key — never the `service_role` key).
+
+## Supabase setup
+
+1. Create a project at [supabase.com](https://supabase.com).
+2. In the SQL Editor, run `supabase/schema.sql` from this repo. It creates the `study_tasks` table, an `updated_at` trigger, table grants for the `authenticated` role, and Row Level Security policies restricting every row to its owning user (`auth.uid() = user_id`).
+3. Under **Authentication → URL Configuration**, set the Site URL (`http://localhost:3000` for local dev; your deployed URL in production).
+4. Under **Authentication → Providers → Email**, confirm Email is enabled, and decide whether "Confirm email" should be on (recommended) or off (faster for testing).
+
+## Deployment (Vercel)
+
+1. Push this repo to GitHub and import it in Vercel ("Add New Project").
+2. In the Vercel project's **Settings → Environment Variables**, add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` with your Supabase project's real values (same ones from your local `.env.local`).
+3. Deploy.
+4. Back in Supabase, add your production Vercel URL to **Authentication → URL Configuration** (Site URL and/or Redirect URLs), or auth redirects will still point at localhost.
+
+## Scripts
+
+- `npm run dev` — start the dev server
+- `npm run build` — production build
+- `npm run start` — run a production build locally
+- `npm run lint` — lint the codebase

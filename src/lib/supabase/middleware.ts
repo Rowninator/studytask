@@ -14,42 +14,49 @@ export async function updateSession(request: NextRequest) {
     return supabaseResponse;
   }
 
-  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
-    cookies: {
-      getAll() {
-        return request.cookies.getAll();
+  try {
+    const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value)
+          );
+          supabaseResponse = NextResponse.next({ request });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          );
+        },
       },
-      setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value }) =>
-          request.cookies.set(name, value)
-        );
-        supabaseResponse = NextResponse.next({ request });
-        cookiesToSet.forEach(({ name, value, options }) =>
-          supabaseResponse.cookies.set(name, value, options)
-        );
-      },
-    },
-  });
+    });
 
-  const { data } = await supabase.auth.getUser();
-  const { pathname } = request.nextUrl;
+    const { data } = await supabase.auth.getUser();
+    const { pathname } = request.nextUrl;
 
-  const isProtectedPath = PROTECTED_PATHS.some((path) =>
-    pathname.startsWith(path)
-  );
-  const isAuthPath = AUTH_PATHS.some((path) => pathname.startsWith(path));
+    const isProtectedPath = PROTECTED_PATHS.some((path) =>
+      pathname.startsWith(path)
+    );
+    const isAuthPath = AUTH_PATHS.some((path) => pathname.startsWith(path));
 
-  if (!data.user && isProtectedPath) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    return NextResponse.redirect(url);
+    if (!data.user && isProtectedPath) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
+    }
+
+    if (data.user && isAuthPath) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/dashboard";
+      return NextResponse.redirect(url);
+    }
+
+    return supabaseResponse;
+  } catch {
+    // Never let a Supabase/network hiccup in middleware take the whole
+    // site down. The dashboard page itself independently re-checks the
+    // session server-side, so failing open here is safe.
+    return supabaseResponse;
   }
-
-  if (data.user && isAuthPath) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
-    return NextResponse.redirect(url);
-  }
-
-  return supabaseResponse;
 }

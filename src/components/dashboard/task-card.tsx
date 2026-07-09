@@ -36,13 +36,15 @@ export function TaskCard({ task }: { task: Task }) {
             <Badge variant="outline">{task.status}</Badge>
           </div>
 
-          <p className="line-clamp-1 text-sm text-muted-foreground">
-            {task.description}
-          </p>
+          {task.description && (
+            <p className="line-clamp-1 text-sm text-muted-foreground">
+              {task.description}
+            </p>
+          )}
 
           <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-            <span>{task.subject}</span>
-            <span>Due {task.dueDate}</span>
+            {task.subject && <span>{task.subject}</span>}
+            <span>{task.dueDate ? `Due ${task.dueDate}` : "No due date"}</span>
           </div>
         </div>
 
