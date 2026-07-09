@@ -4,8 +4,8 @@ import { redirect } from "next/navigation";
 import { AppShell } from "@/components/dashboard/app-shell";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { SummaryCards } from "@/components/dashboard/summary-cards";
+import { FilterableTaskList } from "@/components/dashboard/filterable-task-list";
 import { TaskForm } from "@/components/dashboard/task-form";
-import { TaskList } from "@/components/dashboard/task-list";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getTaskSummary, getUserTasks, type Task } from "@/lib/tasks";
@@ -55,7 +55,7 @@ export default async function DashboardPage() {
             </p>
           </div>
         ) : (
-          <TaskList tasks={tasks} />
+          <FilterableTaskList tasks={tasks} />
         )}
 
         <Card>
