@@ -26,7 +26,8 @@ export default async function DashboardPage() {
 
   try {
     tasks = await getUserTasks(supabase, data.user.id);
-  } catch {
+  } catch (error) {
+    console.error("Failed to load study tasks:", error);
     loadError = true;
   }
 

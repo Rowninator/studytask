@@ -66,6 +66,7 @@ export async function createTask(
   });
 
   if (error) {
+    console.error("Failed to create study task:", error);
     return { error: "Could not save this task. Please try again." };
   }
 
@@ -97,6 +98,7 @@ export async function updateTask(
     .eq("user_id", data.user.id);
 
   if (error) {
+    console.error("Failed to update study task:", error);
     return { error: "Could not update this task. Please try again." };
   }
 
@@ -119,6 +121,7 @@ export async function deleteTask(taskId: string): Promise<TaskFormState> {
     .eq("user_id", data.user.id);
 
   if (error) {
+    console.error("Failed to delete study task:", error);
     return { error: "Could not delete this task. Please try again." };
   }
 
@@ -144,6 +147,7 @@ export async function toggleTaskCompletion(
     .eq("user_id", data.user.id);
 
   if (error) {
+    console.error("Failed to update study task status:", error);
     return { error: "Could not update this task. Please try again." };
   }
 
