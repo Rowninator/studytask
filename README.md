@@ -57,12 +57,53 @@ Both come from your Supabase project's **Project Settings → API** page (Projec
 3. Under **Authentication → URL Configuration**, set the Site URL (`http://localhost:3000` for local dev; your deployed URL in production).
 4. Under **Authentication → Providers → Email**, confirm Email is enabled, and decide whether "Confirm email" should be on (recommended) or off (faster for testing).
 
+## Database schema & RLS
+
+The `study_tasks` table (defined in `supabase/schema.sql`):
+
+| Column | Type | Notes |
+| --- | --- | --- |
+| `id` | `uuid` | primary key, auto-generated |
+| `user_id` | `uuid` | references `auth.users(id)`, cascades on delete |
+| `title` | `text` | required |
+| `description` | `text` | optional |
+| `subject` | `text` | optional |
+| `priority` | `text` | `Low` / `Medium` / `High`, defaults to `Medium` |
+| `status` | `text` | `Not Started` / `In Progress` / `Completed`, defaults to `Not Started` |
+| `due_date` | `date` | optional |
+| `created_at` / `updated_at` | `timestamptz` | `updated_at` auto-refreshes via trigger on every update |
+
+Security is enforced at the database level, not just in the app:
+
+- Row Level Security is enabled on the table.
+- Four policies (select/insert/update/delete) each require `auth.uid() = user_id`, so a user's queries can only ever touch their own rows — even if app-level code had a bug, the database itself would still block cross-user access.
+- The `authenticated` Postgres role is explicitly granted table access (`grant select, insert, update, delete ... to authenticated`); `anon` has no access at all, since the app requires login.
+
 ## Deployment (Vercel)
 
 1. Push this repo to GitHub and import it in Vercel ("Add New Project").
 2. In the Vercel project's **Settings → Environment Variables**, add `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` with your Supabase project's real values (same ones from your local `.env.local`).
 3. Deploy.
 4. Back in Supabase, add your production Vercel URL to **Authentication → URL Configuration** (Site URL and/or Redirect URLs), or auth redirects will still point at localhost.
+
+## Testing checklist
+
+Manual checks to run after any change, both locally and against the deployed URL:
+
+- [ ] `npm run build` compiles with no errors
+- [ ] Logged out, visiting `/dashboard` redirects to `/login`
+- [ ] Logged in, visiting `/login` or `/signup` redirects to `/dashboard`
+- [ ] Sign up with a new account, log in, log out
+- [ ] Create a task (title only, then again with all fields filled in)
+- [ ] Edit an existing task and confirm the change is saved
+- [ ] Delete a task (confirmation prompt appears first)
+- [ ] Toggle a task's complete/incomplete checkbox
+- [ ] Filter tasks by status, priority, and subject, individually and combined
+- [ ] Clear filters and confirm the full list returns
+- [ ] A brand-new account with zero tasks shows the empty state, not an error
+- [ ] Filters that match nothing show "No tasks match your filters"
+- [ ] A second account cannot see or modify the first account's tasks
+- [ ] `git status` shows `.env.local` as untracked, never staged
 
 ## Scripts
 
